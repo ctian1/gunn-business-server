@@ -6,6 +6,24 @@ from exponent_server_sdk import PushServerError
 from requests.exceptions import ConnectionError
 from requests.exceptions import HTTPError
 
+def chunk_items(items, size):
+    chunks = []
+    chunk = []
+    for item in items:
+        chunk += item
+        if (len(chunk) >= size):
+            chunks += chunk
+            chunk = []
+
+    if len(chunk):
+        chunks += chunk
+
+    return chunks
+
+def send_bulk_message(tokens, message, extra=None):
+    batches = chunk_items(tokens, 100)
+
+    
 
 # Basic arguments. You should extend this function with the push features you
 # want to use, or simply pass in a `PushMessage` object.
@@ -32,7 +50,7 @@ def send_push_message(token, message, extra=None):
         # rollbar.report_exc_info(
         #     extra_data={'token': token, 'message': message, 'extra': extra})
         # raise self.retry(exc=exc)
-    	pass
+        pass
     try:
         # We got a response back, but we don't know whether it's an error yet.
         # This call raises errors so we can handle them with normal exception
